@@ -293,6 +293,23 @@ cleanup_old() {
     fi
 }
 
+# ── Claude Code 恢复接口 ─────────────────────────────────────
+
+do_claude_recover() {
+    log "🤖 Claude Code 恢复模式"
+    echo ""
+    echo "可用快照："
+    ls "$SNAPSHOT_ROOT/snapshot_"*.tar.gz 2>/dev/null | wc -l | xargs echo "  共"
+    echo "个"
+    local latest=$(ls -t "$SNAPSHOT_ROOT/snapshot_"*.tar.gz 2>/dev/null | head -1)
+    if [ -n "$latest" ]; then
+        echo "  最新：$(basename $latest)"
+        echo "  大小：$(du -sh $latest | cut -f1)"
+    fi
+    echo ""
+    echo "恢复命令：snapshot.sh restore（需用户输入 YES 确认）"
+}
+
 # ── 主入口 ────────────────────────────────────────────────────
 
 mkdir -p "$SNAPSHOT_ROOT"
@@ -309,6 +326,9 @@ case "${1:-}" in
         ;;
     check)
         do_check
+        ;;
+    claude-recover)
+        do_claude_recover
         ;;
     *)
         echo ""
